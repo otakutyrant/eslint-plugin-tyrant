@@ -3,6 +3,7 @@ import type { Rule, SourceCode } from "eslint";
 import { isTypeScriptFilename } from "./file-tsdoc-utils.js";
 
 const MESSAGE_ID = "nonTSDocCommentBeforeExport";
+const MISSING_MESSAGE_ID = "missingTSDocCommentBeforeExport";
 
 type Comment = ReturnType<SourceCode["getCommentsBefore"]>[number];
 type NodeOrToken = Parameters<SourceCode["getCommentsBefore"]>[0];
@@ -10,6 +11,10 @@ type ExportNode = NodeOrToken & { range?: [number, number] };
 
 function hasOnlyWhitespaceBetween(sourceCode: Readonly<SourceCode>, start: number, end: number): boolean {
   return sourceCode.getText().slice(start, end).trim() === "";
+}
+
+function hasBlankLineBetween(previousEndLine: number, nextStartLine: number): boolean {
+  return nextStartLine - previousEndLine > 1;
 }
 
 function getLeadingCommentBlock(sourceCode: Readonly<SourceCode>, node: ExportNode): Comment[] {
@@ -25,21 +30,34 @@ function getLeadingCommentBlock(sourceCode: Readonly<SourceCode>, node: ExportNo
 
   const relevantComments: Comment[] = [];
   let nextStart = node.range[0];
+  let nextStartLine = node.loc?.start.line;
 
   for (let index = comments.length - 1; index >= 0; index -= 1) {
     const comment = comments[index];
     const [start, end] = comment.range ?? [];
+    const commentEndLine = comment.loc?.end.line;
+    const commentStartLine = comment.loc?.start.line;
 
-    if (start === undefined || end === undefined) {
+    if (
+      start === undefined ||
+      end === undefined ||
+      commentEndLine === undefined ||
+      commentStartLine === undefined ||
+      nextStartLine === undefined
+    ) {
       continue;
     }
 
-    if (!hasOnlyWhitespaceBetween(sourceCode, end, nextStart)) {
+    if (
+      !hasOnlyWhitespaceBetween(sourceCode, end, nextStart) ||
+      hasBlankLineBetween(commentEndLine, nextStartLine)
+    ) {
       break;
     }
 
     relevantComments.unshift(comment);
     nextStart = start;
+    nextStartLine = commentStartLine;
   }
 
   return relevantComments;
@@ -68,7 +86,8 @@ export const requireTSDocStyleCommentsBeforeExportsRule: Rule.RuleModule = {
     hasSuggestions: false,
     schema: [],
     messages: {
-      [MESSAGE_ID]: "Comments immediately before exported declarations must use TSDoc /** ... */ style."
+      [MESSAGE_ID]: "Comments immediately before exported declarations must use TSDoc /** ... */ style.",
+      [MISSING_MESSAGE_ID]: "Exported declarations must have an immediately preceding TSDoc /** ... */ comment."
     }
   },
   create(context) {
@@ -76,42 +95,38 @@ export const requireTSDocStyleCommentsBeforeExportsRule: Rule.RuleModule = {
       return {};
     }
 
+    function checkExport(node: Rule.Node): void {
+      const comments = getLeadingCommentBlock(context.sourceCode, node);
+
+      if (comments.length === 0) {
+        context.report({
+          messageId: MISSING_MESSAGE_ID,
+          node
+        });
+        return;
+      }
+
+      for (const comment of comments) {
+        if (isTSDocStyleComment(context.sourceCode, comment)) {
+          continue;
+        }
+
+        context.report({
+          messageId: MESSAGE_ID,
+          node
+        });
+      }
+    }
+
     return {
       ExportAllDeclaration(node) {
-        for (const comment of getLeadingCommentBlock(context.sourceCode, node)) {
-          if (isTSDocStyleComment(context.sourceCode, comment)) {
-            continue;
-          }
-
-          context.report({
-            messageId: MESSAGE_ID,
-            node
-          });
-        }
+        checkExport(node);
       },
       ExportDefaultDeclaration(node) {
-        for (const comment of getLeadingCommentBlock(context.sourceCode, node)) {
-          if (isTSDocStyleComment(context.sourceCode, comment)) {
-            continue;
-          }
-
-          context.report({
-            messageId: MESSAGE_ID,
-            node
-          });
-        }
+        checkExport(node);
       },
       ExportNamedDeclaration(node) {
-        for (const comment of getLeadingCommentBlock(context.sourceCode, node)) {
-          if (isTSDocStyleComment(context.sourceCode, comment)) {
-            continue;
-          }
-
-          context.report({
-            messageId: MESSAGE_ID,
-            node
-          });
-        }
+        checkExport(node);
       }
     };
   }
