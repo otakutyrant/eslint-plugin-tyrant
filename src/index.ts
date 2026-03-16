@@ -2,11 +2,13 @@ import type { ESLint, Linter } from "eslint";
 
 import { requireEmptyLineAfterFileTSDocRule } from "./rules/require-empty-line-after-file-tsdoc.js";
 import { requireFileTSDocRule } from "./rules/require-file-tsdoc.js";
+import { requireIndexModuleOrganizationTSDocRule } from "./rules/require-index-module-organization-tsdoc.js";
 import { requireTSDocStyleCommentsBeforeExportsRule } from "./rules/require-tsdoc-style-comments-before-exports.js";
 
 export const rules = {
   "require-empty-line-after-file-tsdoc": requireEmptyLineAfterFileTSDocRule,
   "require-file-tsdoc": requireFileTSDocRule,
+  "require-index-module-organization-tsdoc": requireIndexModuleOrganizationTSDocRule,
   "require-tsdoc-style-comments-before-exports": requireTSDocStyleCommentsBeforeExportsRule
 } as const;
 
@@ -30,6 +32,7 @@ export const configs = {
       rules: {
         "tyrant/require-empty-line-after-file-tsdoc": "error",
         "tyrant/require-file-tsdoc": "error",
+        "tyrant/require-index-module-organization-tsdoc": "error",
         "tyrant/require-tsdoc-style-comments-before-exports": "error"
       }
     }
@@ -43,6 +46,7 @@ export const configs = {
       rules: {
         "tyrant/require-empty-line-after-file-tsdoc": "error",
         "tyrant/require-file-tsdoc": "error",
+        "tyrant/require-index-module-organization-tsdoc": "error",
         "tyrant/require-tsdoc-style-comments-before-exports": "error"
       }
     }
