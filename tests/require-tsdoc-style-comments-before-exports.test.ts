@@ -78,18 +78,28 @@ ruleTester.run(
         filename: "module.ts",
         code: "/** First. */\n/** Second. */\nexport const answer = 42;\n",
       },
-    ],
-    invalid: [
       {
         filename: "module.ts",
         code: "export const answer = 42;\n",
-        errors: [
-          {
-            message:
-              "Exported declarations must have an immediately preceding TSDoc /** ... */ comment.",
-          },
-        ],
       },
+      {
+        filename: "module.ts",
+        code: "/**\n * Exported answer.\n */\n\nexport const answer = 42;\n",
+      },
+      {
+        filename: "module.ts",
+        code: "/** Material types. */\n\nexport type List = Material & {\n    type: typeof MaterialType.LIST;\n    lexiconEntries: (LexiconEntry & { body: null })[];\n};\n\nexport type Book = Material & {\n    type: typeof MaterialType.BOOK;\n};\n",
+      },
+      {
+        filename: "module.ts",
+        code: "const answer = 42;\n\n/* detached comment */\n\nexport { answer };\n",
+      },
+      {
+        filename: "module.ts",
+        code: "// Internal note\nconst answer = 42;\n\nexport { answer };\n",
+      },
+    ],
+    invalid: [
       {
         filename: "module.ts",
         code: "// Exported answer\nexport const answer = 42;\n",
@@ -127,50 +137,6 @@ ruleTester.run(
           {
             message:
               "Comments immediately before exported declarations must use TSDoc /** ... */ style.",
-          },
-        ],
-      },
-      {
-        filename: "module.ts",
-        code: "/**\n * Exported answer.\n */\n\nexport const answer = 42;\n",
-        errors: [
-          {
-            message:
-              "Exported declarations must have an immediately preceding TSDoc /** ... */ comment.",
-          },
-        ],
-      },
-      {
-        filename: "module.ts",
-        code: "/** Material types. */\n\nexport type List = Material & {\n    type: typeof MaterialType.LIST;\n    lexiconEntries: (LexiconEntry & { body: null })[];\n};\n\nexport type Book = Material & {\n    type: typeof MaterialType.BOOK;\n};\n",
-        errors: [
-          {
-            message:
-              "Exported declarations must have an immediately preceding TSDoc /** ... */ comment.",
-          },
-          {
-            message:
-              "Exported declarations must have an immediately preceding TSDoc /** ... */ comment.",
-          },
-        ],
-      },
-      {
-        filename: "module.ts",
-        code: "const answer = 42;\n\n/* detached comment */\n\nexport { answer };\n",
-        errors: [
-          {
-            message:
-              "Exported declarations must have an immediately preceding TSDoc /** ... */ comment.",
-          },
-        ],
-      },
-      {
-        filename: "module.ts",
-        code: "// Internal note\nconst answer = 42;\n\nexport { answer };\n",
-        errors: [
-          {
-            message:
-              "Exported declarations must have an immediately preceding TSDoc /** ... */ comment.",
           },
         ],
       },

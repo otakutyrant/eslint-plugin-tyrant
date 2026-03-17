@@ -148,9 +148,9 @@ Note: `Hierarchial modules` is intentionally spelled here to match the current r
 
 ### `tyrant/require-tsdoc-style-comments-before-exports`
 
-Requires every export declaration to have an immediately preceding TSDoc-style `/** ... */` comment.
+Requires comments immediately before export declarations to use TSDoc-style `/** ... */` comments.
 
-What the rule enforces:
+What the rule checks when a comment is attached to an export:
 
 - `export const ...`
 - `export function ...`
@@ -180,13 +180,9 @@ Also valid:
 export const answer = 42;
 ```
 
-Invalid:
+Also valid:
 
 ```ts
-/**
- * Exported answer.
- */
-
 export const answer = 42;
 ```
 
@@ -197,7 +193,7 @@ Invalid:
 export const answer = 42;
 ```
 
-The comment must be directly attached to the export. A blank line between the comment block and the export causes the rule to report the export as undocumented.
+Only comments directly attached to the export are checked. A blank line means the comment is detached, so the rule does not report anything.
 
 ## Notes
 

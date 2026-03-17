@@ -3,7 +3,6 @@ import type { Rule, SourceCode } from "eslint";
 import { isTypeScriptFilename } from "./file-tsdoc-utils.js";
 
 const MESSAGE_ID = "nonTSDocCommentBeforeExport";
-const MISSING_MESSAGE_ID = "missingTSDocCommentBeforeExport";
 
 type Comment = ReturnType<SourceCode["getCommentsBefore"]>[number];
 type NodeOrToken = Parameters<SourceCode["getCommentsBefore"]>[0];
@@ -102,8 +101,6 @@ export const requireTSDocStyleCommentsBeforeExportsRule: Rule.RuleModule = {
     messages: {
       [MESSAGE_ID]:
         "Comments immediately before exported declarations must use TSDoc /** ... */ style.",
-      [MISSING_MESSAGE_ID]:
-        "Exported declarations must have an immediately preceding TSDoc /** ... */ comment.",
     },
   },
   create(context) {
@@ -113,14 +110,6 @@ export const requireTSDocStyleCommentsBeforeExportsRule: Rule.RuleModule = {
 
     function checkExport(node: Rule.Node): void {
       const comments = getLeadingCommentBlock(context.sourceCode, node);
-
-      if (comments.length === 0) {
-        context.report({
-          messageId: MISSING_MESSAGE_ID,
-          node,
-        });
-        return;
-      }
 
       for (const comment of comments) {
         if (isTSDocStyleComment(context.sourceCode, comment)) {
