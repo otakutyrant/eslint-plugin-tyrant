@@ -16,7 +16,7 @@ If a software project is poorly written, it is difficult for humans to understan
 
 In essence, using AI for software development means using natural language as an abstract layer to describe and manipulate programming languages more quickly. Prompts written in natural language are usually easier to understand than source code, even if they can sometimes be ambiguous. So why not inject more natural language directly into the program? Here come the comments.
 
-That is why I wrote some ESLint rules to enforce comments, and leave the rest to AI.
+That is why I wrote some ESLint rules to enforce comments, and leave the rest to AI. There are also some rules used for personal style.
 
 ## Install
 
@@ -199,7 +199,7 @@ Only comments directly attached to the export are checked. A blank line means th
 
 ### `tyrant/restrict-relative-imports-to-base-module`
 
-Disallows relative imports in TypeScript files, except for one case: a sibling submodule may import its base module from the same directory.
+Disallows relative imports in TypeScript files, except when a sibling submodule imports its base module from the same directory. In that special case, the import must be relative, such as `./user`.
 
 Example allowed case:
 
