@@ -4,6 +4,7 @@ import { requireEmptyLineAfterFileTSDocRule } from "./rules/require-empty-line-a
 import { requireFileTSDocRule } from "./rules/require-file-tsdoc.js";
 import { requireIndexModuleOrganizationTSDocRule } from "./rules/require-index-module-organization-tsdoc.js";
 import { requireTSDocStyleCommentsBeforeExportsRule } from "./rules/require-tsdoc-style-comments-before-exports.js";
+import { restrictRelativeImportsToBaseModuleRule } from "./rules/restrict-relative-imports-to-base-module.js";
 
 export const rules = {
   "require-empty-line-after-file-tsdoc": requireEmptyLineAfterFileTSDocRule,
@@ -12,11 +13,13 @@ export const rules = {
     requireIndexModuleOrganizationTSDocRule,
   "require-tsdoc-style-comments-before-exports":
     requireTSDocStyleCommentsBeforeExportsRule,
+  "restrict-relative-imports-to-base-module":
+    restrictRelativeImportsToBaseModuleRule,
 } as const;
 
 const pluginMeta = {
   name: "eslint-plugin-tyrant",
-  version: "0.5.3",
+  version: "0.5.4",
 } as const;
 
 const pluginObject = {
@@ -36,6 +39,7 @@ export const configs = {
         "tyrant/require-file-tsdoc": "error",
         "tyrant/require-index-module-organization-tsdoc": "error",
         "tyrant/require-tsdoc-style-comments-before-exports": "error",
+        "tyrant/restrict-relative-imports-to-base-module": "error",
       },
     },
   ] satisfies Linter.Config[],
@@ -50,6 +54,7 @@ export const configs = {
         "tyrant/require-file-tsdoc": "error",
         "tyrant/require-index-module-organization-tsdoc": "error",
         "tyrant/require-tsdoc-style-comments-before-exports": "error",
+        "tyrant/restrict-relative-imports-to-base-module": "error",
       },
     },
   ] satisfies Linter.Config[],

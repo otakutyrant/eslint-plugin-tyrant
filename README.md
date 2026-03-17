@@ -2,12 +2,13 @@
 
 ESLint plugin for TypeScript codebases that want stricter documentation rules.
 
-The plugin currently ships four rules:
+The plugin currently ships five rules:
 
 - `tyrant/require-file-tsdoc`
 - `tyrant/require-empty-line-after-file-tsdoc`
 - `tyrant/require-index-module-organization-tsdoc`
 - `tyrant/require-tsdoc-style-comments-before-exports`
+- `tyrant/restrict-relative-imports-to-base-module`
 
 ## Motivation
 
@@ -51,6 +52,7 @@ export default [
       "tyrant/require-empty-line-after-file-tsdoc": "error",
       "tyrant/require-index-module-organization-tsdoc": "error",
       "tyrant/require-tsdoc-style-comments-before-exports": "error",
+      "tyrant/restrict-relative-imports-to-base-module": "error",
     },
   },
 ];
@@ -194,6 +196,38 @@ export const answer = 42;
 ```
 
 Only comments directly attached to the export are checked. A blank line means the comment is detached, so the rule does not report anything.
+
+### `tyrant/restrict-relative-imports-to-base-module`
+
+Disallows relative imports in TypeScript files, except for one case: a sibling submodule may import its base module from the same directory.
+
+Example allowed case:
+
+- `user.ts`
+- `user.types.ts`
+- `user.constants.ts`
+
+In that layout, `user.types.ts` may import `user.ts` with a relative path such as `./user`.
+
+Valid:
+
+```ts
+import type { User } from "./user";
+```
+
+Invalid:
+
+```ts
+import { helper } from "./helper";
+```
+
+Also invalid:
+
+```ts
+import type { User } from "user";
+```
+
+The second example is invalid when it resolves to the sibling base module in the same directory. In that case, the rule requires a relative import such as `./user`.
 
 ## Notes
 
