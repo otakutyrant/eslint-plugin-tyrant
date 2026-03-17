@@ -1,6 +1,13 @@
 # eslint-plugin-tyrant
 
-Pure TypeScript ESLint plugin with a rule that requires a TSDoc file comment at the top of each TypeScript module. I named this plugin as tyrant because I am otakutyrant and this is a personal plugin.
+ESLint plugin for TypeScript codebases that want stricter documentation rules.
+
+The plugin currently ships four rules:
+
+- `tyrant/require-file-tsdoc`
+- `tyrant/require-empty-line-after-file-tsdoc`
+- `tyrant/require-index-module-organization-tsdoc`
+- `tyrant/require-tsdoc-style-comments-before-exports`
 
 ## Motivation
 
@@ -10,16 +17,27 @@ In essence, using AI for software development means using natural language as an
 
 That is why I wrote some ESLint rules to enforce comments, and leave the rest to AI.
 
-## Rule
+## Install
 
-- `tyrant/require-file-tsdoc`: require every `.ts`, `.tsx`, `.mts`, and `.cts` file to begin with a `/** ... */` TSDoc comment.
-- Accepted preamble before that TSDoc: UTF-8 BOM, a single shebang line, and optional empty lines after the shebang.
-- `tyrant/require-empty-line-after-file-tsdoc`: require at least one empty line after the top-level file TSDoc comment.
-- `tyrant/require-index-module-organization-tsdoc`: require TypeScript `index.*` modules to include `Flat modules` or `Hierarchial modules` in the top-level file TSDoc comment to describe how modules in the directory are organized.
-- `tyrant/require-tsdoc-style-comments-before-exports`: require every export to have an immediately preceding `/** ... */` TSDoc comment, with no blank line between the comment block and the export.
-- This rule is not auto-fixable. If a file does not need module-level docs, disable the rule in that file explicitly.
+```sh
+pnpm add -D eslint eslint-plugin-tyrant
+```
+
+`eslint-plugin-tyrant` has a peer dependency on ESLint 9.
 
 ## Usage
+
+### Use the bundled config
+
+```ts
+import tyrant from "eslint-plugin-tyrant";
+
+export default [...tyrant.configs.recommended];
+```
+
+`tyrant.configs.recommendedTypeScript` is also exported and currently matches `recommended`.
+
+### Configure rules manually
 
 ```ts
 import tyrant from "eslint-plugin-tyrant";
@@ -30,7 +48,159 @@ export default [
     plugins: { tyrant },
     rules: {
       "tyrant/require-file-tsdoc": "error",
+      "tyrant/require-empty-line-after-file-tsdoc": "error",
+      "tyrant/require-index-module-organization-tsdoc": "error",
+      "tyrant/require-tsdoc-style-comments-before-exports": "error",
     },
   },
 ];
 ```
+
+## Rules
+
+### `tyrant/require-file-tsdoc`
+
+Requires every TypeScript module to start with a top-level `/** ... */` block comment.
+
+- Checked extensions: `.ts`, `.tsx`, `.mts`, `.cts`
+- Ignored: non-TypeScript files and ESLint `"<input>"`
+- Allowed before the file TSDoc:
+  - UTF-8 BOM
+  - one shebang line
+  - whitespace after the shebang
+
+Valid:
+
+```ts
+#!/usr/bin/env node
+
+/**
+ * CLI entrypoint.
+ */
+
+export const answer = 42;
+```
+
+Invalid:
+
+```ts
+// Not TSDoc
+export const answer = 42;
+```
+
+If a file truly does not need module-level docs, disable the rule explicitly for that file.
+
+### `tyrant/require-empty-line-after-file-tsdoc`
+
+Requires at least one blank line after the top-level file TSDoc comment.
+
+Valid:
+
+```ts
+/**
+ * File docs.
+ */
+
+export const answer = 42;
+```
+
+Invalid:
+
+```ts
+/**
+ * File docs.
+ */
+export const answer = 42;
+```
+
+This rule only runs when a top-level file TSDoc comment is present.
+
+### `tyrant/require-index-module-organization-tsdoc`
+
+Requires TypeScript `index.*` files to document how the directory is organized.
+
+The current implementation accepts either of these exact marker strings inside the file TSDoc:
+
+- `Flat modules`
+- `Hierarchial modules`
+
+Valid:
+
+```ts
+/**
+ * Flat modules
+ */
+
+export * from "./feature.js";
+```
+
+Invalid:
+
+```ts
+/**
+ * File docs.
+ */
+
+export * from "./feature.js";
+```
+
+Note: `Hierarchial modules` is intentionally spelled here to match the current rule implementation.
+
+### `tyrant/require-tsdoc-style-comments-before-exports`
+
+Requires every export declaration to have an immediately preceding TSDoc-style `/** ... */` comment.
+
+What the rule enforces:
+
+- `export const ...`
+- `export function ...`
+- `export default ...`
+- `export { ... }`
+- `export { ... } from "..."`
+- `export * from "..."`
+
+Valid:
+
+```ts
+/**
+ * Exported answer.
+ */
+export const answer = 42;
+```
+
+Also valid:
+
+```ts
+/**
+ * Summary.
+ */
+/**
+ * Additional detail.
+ */
+export const answer = 42;
+```
+
+Invalid:
+
+```ts
+/**
+ * Exported answer.
+ */
+
+export const answer = 42;
+```
+
+Invalid:
+
+```ts
+/* Not TSDoc */
+export const answer = 42;
+```
+
+The comment must be directly attached to the export. A blank line between the comment block and the export causes the rule to report the export as undocumented.
+
+## Notes
+
+- None of the rules currently provide autofixes.
+- The plugin is ESM-only.
+- The package exports a default plugin object plus `rules` and `configs`.
