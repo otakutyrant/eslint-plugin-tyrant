@@ -23,7 +23,7 @@ That is why I wrote some ESLint rules to enforce comments, and leave the rest to
 pnpm add -D eslint eslint-plugin-tyrant
 ```
 
-`eslint-plugin-tyrant` has a peer dependency on ESLint 9.
+`eslint-plugin-tyrant` supports ESLint 9 and 10.
 
 ## Usage
 

@@ -1,40 +1,40 @@
 {
   "name": "eslint-plugin-tyrant",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "ESLint plugin with TypeScript-focused rules.",
-  "type": "module",
+  "license": "MIT",
   "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
-    "format": "prettier --check .",
     "build": "tsc -p tsconfig.json",
+    "format": "prettier --check .",
     "lint": "eslint .",
     "test": "node --import tsx --test tests/**/*.test.ts"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "eslint",
     "eslintplugin",
     "typescript",
     "tsdoc"
   ],
-  "license": "MIT",
   "peerDependencies": {
-    "eslint": "^9.0.0"
+    "eslint": "^9.0.0 || ^10.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.35.0",
+    "@eslint/compat": "^2.0.3",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^24.5.2",
     "@typescript-eslint/parser": "^8.43.0",
-    "eslint": "^9.35.0",
+    "eslint": "^10.0.3",
     "eslint-plugin-tsdoc": "^0.4.0",
     "globals": "^16.4.0",
     "jiti": "^2.6.1",
@@ -43,5 +43,6 @@
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.43.0"
-  }
+  },
+  "types": "./dist/index.d.ts"
 }

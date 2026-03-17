@@ -6,7 +6,10 @@ import tsParser from "@typescript-eslint/parser";
 import { requireEmptyLineAfterFileTSDocRule } from "../src/rules/require-empty-line-after-file-tsdoc.js";
 import { requireFileTSDocRule } from "../src/rules/require-file-tsdoc.js";
 
-type RuleTesterCallback = (this: { timeout: () => void }, t: unknown) => void | Promise<void>;
+type RuleTesterCallback = (
+  this: { timeout: () => void },
+  t: unknown,
+) => void | Promise<void>;
 
 RuleTester.describe = (text: string, method: RuleTesterCallback) => {
   void test(text, async (t) => {
@@ -15,10 +18,10 @@ RuleTester.describe = (text: string, method: RuleTesterCallback) => {
         {
           timeout() {
             return;
-          }
+          },
         },
-        t
-      )
+        t,
+      ),
     );
   });
 };
@@ -30,10 +33,10 @@ RuleTester.it = (text: string, method: RuleTesterCallback) => {
         {
           timeout() {
             return;
-          }
+          },
         },
-        t
-      )
+        t,
+      ),
     );
   });
 };
@@ -45,30 +48,30 @@ const ruleTester = new RuleTester({
     parser: tsParser,
     parserOptions: {
       ecmaFeatures: {
-        jsx: true
-      }
-    }
-  }
+        jsx: true,
+      },
+    },
+  },
 });
 
 ruleTester.run("require-file-tsdoc", requireFileTSDocRule, {
   valid: [
     {
       filename: "module.ts",
-      code: "/**\n * File docs.\n */\n\nexport const answer = 42;\n"
+      code: "/**\n * File docs.\n */\n\nexport const answer = 42;\n",
     },
     {
       filename: "component.tsx",
-      code: "/**\n * Component docs.\n */\n\nexport function Component() { return <div />; }\n"
+      code: "/**\n * Component docs.\n */\n\nexport function Component() { return <div />; }\n",
     },
     {
       filename: "cli.ts",
-      code: "#!/usr/bin/env node\n\n/**\n * CLI entrypoint.\n */\n\nexport const answer = 42;\n"
+      code: "#!/usr/bin/env node\n\n/**\n * CLI entrypoint.\n */\n\nexport const answer = 42;\n",
     },
     {
       filename: "plain.js",
-      code: "export const skipped = true;\n"
-    }
+      code: "export const skipped = true;\n",
+    },
   ],
   invalid: [
     {
@@ -77,9 +80,9 @@ ruleTester.run("require-file-tsdoc", requireFileTSDocRule, {
       errors: [
         {
           message:
-            "Missing a top-level /** ... */ TSDoc block as a file comment. You can disable this rule in the file if it is not necessary."
-        }
-      ]
+            "Missing a top-level /** ... */ TSDoc block as a file comment. You can disable this rule in the file if it is not necessary.",
+        },
+      ],
     },
     {
       filename: "wrong-comment.ts",
@@ -87,9 +90,9 @@ ruleTester.run("require-file-tsdoc", requireFileTSDocRule, {
       errors: [
         {
           message:
-            "Missing a top-level /** ... */ TSDoc block as a file comment. You can disable this rule in the file if it is not necessary."
-        }
-      ]
+            "Missing a top-level /** ... */ TSDoc block as a file comment. You can disable this rule in the file if it is not necessary.",
+        },
+      ],
     },
     {
       filename: "shebang-without-tsdoc.ts",
@@ -97,50 +100,56 @@ ruleTester.run("require-file-tsdoc", requireFileTSDocRule, {
       errors: [
         {
           message:
-            "Missing a top-level /** ... */ TSDoc block as a file comment. You can disable this rule in the file if it is not necessary."
-        }
-      ]
-    }
-  ]
+            "Missing a top-level /** ... */ TSDoc block as a file comment. You can disable this rule in the file if it is not necessary.",
+        },
+      ],
+    },
+  ],
 });
 
-ruleTester.run("require-empty-line-after-file-tsdoc", requireEmptyLineAfterFileTSDocRule, {
-  valid: [
-    {
-      filename: "module.ts",
-      code: "/**\n * File docs.\n */\n\nexport const answer = 42;\n"
-    },
-    {
-      filename: "module-with-more-space.ts",
-      code: "/**\n * File docs.\n */\n\n\nexport const answer = 42;\n"
-    },
-    {
-      filename: "cli.ts",
-      code: "#!/usr/bin/env node\n\n/**\n * CLI entrypoint.\n */\n\nexport const answer = 42;\n"
-    },
-    {
-      filename: "missing-tsdoc.ts",
-      code: "export const answer = 42;\n"
-    }
-  ],
-  invalid: [
-    {
-      filename: "no-gap.ts",
-      code: "/**\n * File docs.\n */\nexport const answer = 42;\n",
-      errors: [
-        {
-          message: "There should be at least one empty line after the top-level file TSDoc comment."
-        }
-      ]
-    },
-    {
-      filename: "cli-no-gap.ts",
-      code: "#!/usr/bin/env node\n\n/**\n * CLI entrypoint.\n */\nexport const answer = 42;\n",
-      errors: [
-        {
-          message: "There should be at least one empty line after the top-level file TSDoc comment."
-        }
-      ]
-    }
-  ]
-});
+ruleTester.run(
+  "require-empty-line-after-file-tsdoc",
+  requireEmptyLineAfterFileTSDocRule,
+  {
+    valid: [
+      {
+        filename: "module.ts",
+        code: "/**\n * File docs.\n */\n\nexport const answer = 42;\n",
+      },
+      {
+        filename: "module-with-more-space.ts",
+        code: "/**\n * File docs.\n */\n\n\nexport const answer = 42;\n",
+      },
+      {
+        filename: "cli.ts",
+        code: "#!/usr/bin/env node\n\n/**\n * CLI entrypoint.\n */\n\nexport const answer = 42;\n",
+      },
+      {
+        filename: "missing-tsdoc.ts",
+        code: "export const answer = 42;\n",
+      },
+    ],
+    invalid: [
+      {
+        filename: "no-gap.ts",
+        code: "/**\n * File docs.\n */\nexport const answer = 42;\n",
+        errors: [
+          {
+            message:
+              "There should be at least one empty line after the top-level file TSDoc comment.",
+          },
+        ],
+      },
+      {
+        filename: "cli-no-gap.ts",
+        code: "#!/usr/bin/env node\n\n/**\n * CLI entrypoint.\n */\nexport const answer = 42;\n",
+        errors: [
+          {
+            message:
+              "There should be at least one empty line after the top-level file TSDoc comment.",
+          },
+        ],
+      },
+    ],
+  },
+);

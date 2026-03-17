@@ -8,18 +8,20 @@ import { requireTSDocStyleCommentsBeforeExportsRule } from "./rules/require-tsdo
 export const rules = {
   "require-empty-line-after-file-tsdoc": requireEmptyLineAfterFileTSDocRule,
   "require-file-tsdoc": requireFileTSDocRule,
-  "require-index-module-organization-tsdoc": requireIndexModuleOrganizationTSDocRule,
-  "require-tsdoc-style-comments-before-exports": requireTSDocStyleCommentsBeforeExportsRule
+  "require-index-module-organization-tsdoc":
+    requireIndexModuleOrganizationTSDocRule,
+  "require-tsdoc-style-comments-before-exports":
+    requireTSDocStyleCommentsBeforeExportsRule,
 } as const;
 
 const pluginMeta = {
   name: "eslint-plugin-tyrant",
-  version: "0.4.0"
+  version: "0.5.0",
 } as const;
 
 const pluginObject = {
   meta: pluginMeta,
-  rules
+  rules,
 };
 
 export const configs = {
@@ -27,36 +29,36 @@ export const configs = {
     {
       files: ["**/*.{ts,tsx,mts,cts}"],
       plugins: {
-        tyrant: pluginObject
+        tyrant: pluginObject,
       },
       rules: {
         "tyrant/require-empty-line-after-file-tsdoc": "error",
         "tyrant/require-file-tsdoc": "error",
         "tyrant/require-index-module-organization-tsdoc": "error",
-        "tyrant/require-tsdoc-style-comments-before-exports": "error"
-      }
-    }
+        "tyrant/require-tsdoc-style-comments-before-exports": "error",
+      },
+    },
   ] satisfies Linter.Config[],
   recommendedTypeScript: [
     {
       files: ["**/*.{ts,tsx,mts,cts}"],
       plugins: {
-        tyrant: pluginObject
+        tyrant: pluginObject,
       },
       rules: {
         "tyrant/require-empty-line-after-file-tsdoc": "error",
         "tyrant/require-file-tsdoc": "error",
         "tyrant/require-index-module-organization-tsdoc": "error",
-        "tyrant/require-tsdoc-style-comments-before-exports": "error"
-      }
-    }
-  ] satisfies Linter.Config[]
+        "tyrant/require-tsdoc-style-comments-before-exports": "error",
+      },
+    },
+  ] satisfies Linter.Config[],
 };
 
 const plugin = {
   meta: pluginMeta,
   rules,
-  configs
+  configs,
 } satisfies ESLint.Plugin;
 
 export default plugin;

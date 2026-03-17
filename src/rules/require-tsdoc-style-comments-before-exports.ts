@@ -9,15 +9,25 @@ type Comment = ReturnType<SourceCode["getCommentsBefore"]>[number];
 type NodeOrToken = Parameters<SourceCode["getCommentsBefore"]>[0];
 type ExportNode = NodeOrToken & { range?: [number, number] };
 
-function hasOnlyWhitespaceBetween(sourceCode: Readonly<SourceCode>, start: number, end: number): boolean {
+function hasOnlyWhitespaceBetween(
+  sourceCode: Readonly<SourceCode>,
+  start: number,
+  end: number,
+): boolean {
   return sourceCode.getText().slice(start, end).trim() === "";
 }
 
-function hasBlankLineBetween(previousEndLine: number, nextStartLine: number): boolean {
+function hasBlankLineBetween(
+  previousEndLine: number,
+  nextStartLine: number,
+): boolean {
   return nextStartLine - previousEndLine > 1;
 }
 
-function getLeadingCommentBlock(sourceCode: Readonly<SourceCode>, node: ExportNode): Comment[] {
+function getLeadingCommentBlock(
+  sourceCode: Readonly<SourceCode>,
+  node: ExportNode,
+): Comment[] {
   if (!node.range) {
     return [];
   }
@@ -63,7 +73,10 @@ function getLeadingCommentBlock(sourceCode: Readonly<SourceCode>, node: ExportNo
   return relevantComments;
 }
 
-function isTSDocStyleComment(sourceCode: Readonly<SourceCode>, comment: Comment): boolean {
+function isTSDocStyleComment(
+  sourceCode: Readonly<SourceCode>,
+  comment: Comment,
+): boolean {
   const [start, end] = comment.range ?? [];
 
   if (start === undefined || end === undefined) {
@@ -81,14 +94,17 @@ export const requireTSDocStyleCommentsBeforeExportsRule: Rule.RuleModule = {
   meta: {
     type: "suggestion",
     docs: {
-      description: "Require existing comments before exports to use TSDoc block comment style."
+      description:
+        "Require existing comments before exports to use TSDoc block comment style.",
     },
     hasSuggestions: false,
     schema: [],
     messages: {
-      [MESSAGE_ID]: "Comments immediately before exported declarations must use TSDoc /** ... */ style.",
-      [MISSING_MESSAGE_ID]: "Exported declarations must have an immediately preceding TSDoc /** ... */ comment."
-    }
+      [MESSAGE_ID]:
+        "Comments immediately before exported declarations must use TSDoc /** ... */ style.",
+      [MISSING_MESSAGE_ID]:
+        "Exported declarations must have an immediately preceding TSDoc /** ... */ comment.",
+    },
   },
   create(context) {
     if (!isTypeScriptFilename(context.filename)) {
@@ -101,7 +117,7 @@ export const requireTSDocStyleCommentsBeforeExportsRule: Rule.RuleModule = {
       if (comments.length === 0) {
         context.report({
           messageId: MISSING_MESSAGE_ID,
-          node
+          node,
         });
         return;
       }
@@ -113,7 +129,7 @@ export const requireTSDocStyleCommentsBeforeExportsRule: Rule.RuleModule = {
 
         context.report({
           messageId: MESSAGE_ID,
-          node
+          node,
         });
       }
     }
@@ -127,7 +143,7 @@ export const requireTSDocStyleCommentsBeforeExportsRule: Rule.RuleModule = {
       },
       ExportNamedDeclaration(node) {
         checkExport(node);
-      }
+      },
     };
-  }
+  },
 };

@@ -31,7 +31,9 @@ function getFileBodyStart(text: string): number {
   return index;
 }
 
-export function getTopLevelTSDocComment(sourceCode: Readonly<SourceCode>): FileTSDocComment | null {
+export function getTopLevelTSDocComment(
+  sourceCode: Readonly<SourceCode>,
+): FileTSDocComment | null {
   const text = sourceCode.getText();
   const expectedStart = getFileBodyStart(text);
   const firstComment = sourceCode
@@ -39,11 +41,19 @@ export function getTopLevelTSDocComment(sourceCode: Readonly<SourceCode>): FileT
     .find((comment) => comment.range?.[0] !== 0 || !text.startsWith("#!"));
   const [start, end] = firstComment?.range ?? [];
 
-  if (!firstComment || start === undefined || end === undefined || start !== expectedStart) {
+  if (
+    !firstComment ||
+    start === undefined ||
+    end === undefined ||
+    start !== expectedStart
+  ) {
     return null;
   }
 
-  if (firstComment.type !== "Block" || !text.slice(start, end).startsWith("/**")) {
+  if (
+    firstComment.type !== "Block" ||
+    !text.slice(start, end).startsWith("/**")
+  ) {
     return null;
   }
 
