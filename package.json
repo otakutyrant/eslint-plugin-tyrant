@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-tyrant",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "ESLint plugin with TypeScript-focused rules.",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -15,6 +15,7 @@
     "build": "tsc -p tsconfig.json",
     "format": "prettier --check .",
     "lint": "eslint .",
+    "prepack": "pnpm build",
     "test": "node --import tsx --test tests/**/*.test.ts"
   },
   "files": [

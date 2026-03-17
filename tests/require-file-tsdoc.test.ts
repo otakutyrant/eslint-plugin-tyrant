@@ -133,6 +133,10 @@ ruleTester.run(
         code: "/**\n * File docs.\n */",
       },
       {
+        filename: "index.ts",
+        code: "/** Low-level, business-unrelated, and common library. Flat modules. */",
+      },
+      {
         filename: "comment-only-trailing-newline.ts",
         code: "/**\n * File docs.\n */\n",
       },
