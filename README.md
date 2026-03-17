@@ -113,7 +113,7 @@ Invalid:
 export const answer = 42;
 ```
 
-This rule only runs when a top-level file TSDoc comment is present.
+This rule only runs when a top-level file TSDoc comment is present. If the file ends immediately after that comment, no extra blank line is required.
 
 ### `tyrant/require-index-module-organization-tsdoc`
 

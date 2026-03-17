@@ -38,6 +38,10 @@ export const requireEmptyLineAfterFileTSDocRule: Rule.RuleModule = {
           .getText()
           .slice(fileTSDocComment.end);
 
+        if (textAfterComment.trim() === "") {
+          return;
+        }
+
         if (
           textAfterComment.startsWith("\n\n") ||
           textAfterComment.startsWith("\r\n\r\n")

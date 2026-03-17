@@ -128,6 +128,14 @@ ruleTester.run(
         filename: "missing-tsdoc.ts",
         code: "export const answer = 42;\n",
       },
+      {
+        filename: "comment-only.ts",
+        code: "/**\n * File docs.\n */",
+      },
+      {
+        filename: "comment-only-trailing-newline.ts",
+        code: "/**\n * File docs.\n */\n",
+      },
     ],
     invalid: [
       {
