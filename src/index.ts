@@ -1,5 +1,6 @@
 import type { ESLint, Linter } from "eslint";
 
+import { preferSingleLineTSDocCommentsRule } from "./rules/prefer-single-line-tsdoc-comments.js";
 import { requireEmptyLineAfterFileTSDocRule } from "./rules/require-empty-line-after-file-tsdoc.js";
 import { requireFileTSDocRule } from "./rules/require-file-tsdoc.js";
 import { requireIndexModuleOrganizationTSDocRule } from "./rules/require-index-module-organization-tsdoc.js";
@@ -7,6 +8,7 @@ import { requireTSDocStyleCommentsBeforeExportsRule } from "./rules/require-tsdo
 import { restrictRelativeImportsToBaseModuleRule } from "./rules/restrict-relative-imports-to-base-module.js";
 
 export const rules = {
+  "prefer-single-line-tsdoc-comments": preferSingleLineTSDocCommentsRule,
   "require-empty-line-after-file-tsdoc": requireEmptyLineAfterFileTSDocRule,
   "require-file-tsdoc": requireFileTSDocRule,
   "require-index-module-organization-tsdoc":
@@ -19,7 +21,7 @@ export const rules = {
 
 const pluginMeta = {
   name: "eslint-plugin-tyrant",
-  version: "0.5.5",
+  version: "0.5.6",
 } as const;
 
 const pluginObject = {
@@ -35,6 +37,7 @@ export const configs = {
         tyrant: pluginObject,
       },
       rules: {
+        "tyrant/prefer-single-line-tsdoc-comments": "error",
         "tyrant/require-empty-line-after-file-tsdoc": "error",
         "tyrant/require-file-tsdoc": "error",
         "tyrant/require-index-module-organization-tsdoc": "error",
@@ -50,6 +53,7 @@ export const configs = {
         tyrant: pluginObject,
       },
       rules: {
+        "tyrant/prefer-single-line-tsdoc-comments": "error",
         "tyrant/require-empty-line-after-file-tsdoc": "error",
         "tyrant/require-file-tsdoc": "error",
         "tyrant/require-index-module-organization-tsdoc": "error",

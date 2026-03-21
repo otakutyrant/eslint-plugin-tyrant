@@ -2,8 +2,9 @@
 
 ESLint plugin for TypeScript codebases that want stricter documentation rules.
 
-The plugin currently ships five rules:
+The plugin currently ships six rules:
 
+- `tyrant/prefer-single-line-tsdoc-comments`
 - `tyrant/require-file-tsdoc`
 - `tyrant/require-empty-line-after-file-tsdoc`
 - `tyrant/require-index-module-organization-tsdoc`
@@ -48,6 +49,7 @@ export default [
     files: ["**/*.{ts,tsx,mts,cts}"],
     plugins: { tyrant },
     rules: {
+      "tyrant/prefer-single-line-tsdoc-comments": "error",
       "tyrant/require-file-tsdoc": "error",
       "tyrant/require-empty-line-after-file-tsdoc": "error",
       "tyrant/require-index-module-organization-tsdoc": "error",
@@ -59,6 +61,41 @@ export default [
 ```
 
 ## Rules
+
+### `tyrant/prefer-single-line-tsdoc-comments`
+
+Requires a short TSDoc comment with only one content line to stay on one line.
+
+The current implementation reports multi-line `/** ... */` comments when:
+
+- the normalized comment body contains exactly one non-empty line
+- the autofixed form would be shorter than 80 characters
+
+Valid:
+
+```ts
+/** One line. */
+export const answer = 42;
+```
+
+Also valid:
+
+```ts
+/**
+ * First line.
+ * Second line.
+ */
+export const answer = 42;
+```
+
+Invalid:
+
+```ts
+/**
+ * One line.
+ */
+export const answer = 42;
+```
 
 ### `tyrant/require-file-tsdoc`
 

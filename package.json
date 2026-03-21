@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-tyrant",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "description": "ESLint plugin with TypeScript-focused rules.",
   "license": "MIT",
   "main": "./dist/index.js",
