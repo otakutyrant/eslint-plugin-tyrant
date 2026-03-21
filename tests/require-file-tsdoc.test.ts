@@ -145,6 +145,7 @@ ruleTester.run(
       {
         filename: "no-gap.ts",
         code: "/**\n * File docs.\n */\nexport const answer = 42;\n",
+        output: "/**\n * File docs.\n */\n\nexport const answer = 42;\n",
         errors: [
           {
             message:
@@ -155,6 +156,8 @@ ruleTester.run(
       {
         filename: "cli-no-gap.ts",
         code: "#!/usr/bin/env node\n\n/**\n * CLI entrypoint.\n */\nexport const answer = 42;\n",
+        output:
+          "#!/usr/bin/env node\n\n/**\n * CLI entrypoint.\n */\n\nexport const answer = 42;\n",
         errors: [
           {
             message:

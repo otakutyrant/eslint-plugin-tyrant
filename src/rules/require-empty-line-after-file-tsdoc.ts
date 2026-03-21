@@ -14,6 +14,7 @@ export const requireEmptyLineAfterFileTSDocRule: Rule.RuleModule = {
       description:
         "Require an empty line after the top-level file TSDoc comment.",
     },
+    fixable: "whitespace",
     hasSuggestions: false,
     schema: [],
     messages: {
@@ -53,6 +54,17 @@ export const requireEmptyLineAfterFileTSDocRule: Rule.RuleModule = {
           node,
           loc: context.sourceCode.getLocFromIndex(fileTSDocComment.end),
           messageId: MESSAGE_ID,
+          fix(fixer) {
+            const sourceText = context.sourceCode.getText();
+            const lineBreak = sourceText.includes("\r\n") ? "\r\n" : "\n";
+            const textAfterComment = sourceText.slice(fileTSDocComment.end);
+            const leadingLineBreak = textAfterComment.match(/^(?:\r\n|\n)/)?.[0];
+
+            return fixer.insertTextAfterRange(
+              [fileTSDocComment.start, fileTSDocComment.end],
+              leadingLineBreak ?? `${lineBreak}${lineBreak}`,
+            );
+          },
         });
       },
     };

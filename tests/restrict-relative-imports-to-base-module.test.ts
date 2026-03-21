@@ -111,6 +111,8 @@ ruleTester.run(
       {
         filename: path.join(fixtureRoot, "user.types.ts"),
         code: 'import { helper } from "./helper";\nexport const value = helper;\n',
+        output:
+          'import { helper } from "helper";\nexport const value = helper;\n',
         errors: [
           {
             message:
@@ -121,6 +123,8 @@ ruleTester.run(
       {
         filename: path.join(fixtureRoot, "consumer.ts"),
         code: 'import { helper } from "./helper";\nexport const value = helper;\n',
+        output:
+          'import { helper } from "helper";\nexport const value = helper;\n',
         errors: [
           {
             message:
@@ -131,6 +135,8 @@ ruleTester.run(
       {
         filename: path.join(fixtureRoot, "user.types.ts"),
         code: 'import type { User } from "user";\nexport type UserRecord = User;\n',
+        output:
+          'import type { User } from "./user";\nexport type UserRecord = User;\n',
         errors: [
           {
             message:

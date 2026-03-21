@@ -268,6 +268,6 @@ The second example is invalid when it resolves to the sibling base module in the
 
 ## Notes
 
-- None of the rules currently provide autofixes.
+- Autofix is currently available for `tyrant/prefer-single-line-tsdoc-comments`, `tyrant/require-empty-line-after-file-tsdoc`, and the safe rewrite cases in `tyrant/restrict-relative-imports-to-base-module`.
 - The plugin is ESM-only.
 - The package exports a default plugin object plus `rules` and `configs`.

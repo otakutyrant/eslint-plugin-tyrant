@@ -20,6 +20,11 @@ interface SubmoduleInfo {
   submoduleName: string;
 }
 
+interface CompilerConfig {
+  configDirectory: string | null;
+  options: ts.CompilerOptions;
+}
+
 function isDeclarationFile(filename: string): boolean {
   return /\.d\.(?:ts|cts|mts)$/.test(filename);
 }
@@ -33,19 +38,25 @@ function isRelativeSpecifier(specifier: string): boolean {
   );
 }
 
-function getCompilerOptions(filename: string): ts.CompilerOptions {
+function getCompilerConfig(filename: string): CompilerConfig {
   const configPath = ts.findConfigFile(path.dirname(filename), (candidate) =>
     ts.sys.fileExists(candidate),
   );
 
   if (!configPath) {
-    return DEFAULT_COMPILER_OPTIONS;
+    return {
+      configDirectory: null,
+      options: DEFAULT_COMPILER_OPTIONS,
+    };
   }
 
   const cachedOptions = compilerOptionsCache.get(configPath);
 
   if (cachedOptions) {
-    return cachedOptions;
+    return {
+      configDirectory: path.dirname(configPath),
+      options: cachedOptions,
+    };
   }
 
   const configFile = ts.readConfigFile(configPath, (candidate) =>
@@ -54,7 +65,10 @@ function getCompilerOptions(filename: string): ts.CompilerOptions {
 
   if (configFile.error) {
     compilerOptionsCache.set(configPath, DEFAULT_COMPILER_OPTIONS);
-    return DEFAULT_COMPILER_OPTIONS;
+    return {
+      configDirectory: path.dirname(configPath),
+      options: DEFAULT_COMPILER_OPTIONS,
+    };
   }
 
   const parsedConfig = ts.parseJsonConfigFileContent(
@@ -64,17 +78,21 @@ function getCompilerOptions(filename: string): ts.CompilerOptions {
   );
 
   compilerOptionsCache.set(configPath, parsedConfig.options);
-  return parsedConfig.options;
+  return {
+    configDirectory: path.dirname(configPath),
+    options: parsedConfig.options,
+  };
 }
 
 function resolveModule(
   containingFile: string,
   specifier: string,
 ): string | null {
+  const compilerConfig = getCompilerConfig(containingFile);
   const resolvedModule = ts.resolveModuleName(
     specifier,
     containingFile,
-    getCompilerOptions(containingFile),
+    compilerConfig.options,
     ts.sys,
   ).resolvedModule;
 
@@ -93,6 +111,65 @@ function resolveModule(
   }
 
   return resolvedFilename;
+}
+
+function getExtensionlessImportPath(resolvedFilename: string): string {
+  const extension = path.extname(resolvedFilename);
+  return resolvedFilename.slice(0, -extension.length).replaceAll(path.sep, "/");
+}
+
+function getNonRelativeImportSpecifier(
+  containingFile: string,
+  resolvedFilename: string,
+): string | null {
+  const compilerConfig = getCompilerConfig(containingFile);
+  const baseUrl = compilerConfig.options.baseUrl;
+
+  if (!baseUrl) {
+    return null;
+  }
+
+  const absoluteBaseUrl = path.isAbsolute(baseUrl)
+    ? baseUrl
+    : compilerConfig.configDirectory
+      ? path.resolve(compilerConfig.configDirectory, baseUrl)
+      : path.resolve(path.dirname(containingFile), baseUrl);
+  const importPath = getExtensionlessImportPath(resolvedFilename);
+  const relativeToBaseUrl = path.relative(absoluteBaseUrl, importPath);
+
+  if (
+    relativeToBaseUrl === "" ||
+    relativeToBaseUrl.startsWith("..") ||
+    path.isAbsolute(relativeToBaseUrl)
+  ) {
+    return null;
+  }
+
+  const candidateSpecifier = relativeToBaseUrl.replaceAll(path.sep, "/");
+
+  if (resolveModule(containingFile, candidateSpecifier) !== resolvedFilename) {
+    return null;
+  }
+
+  return candidateSpecifier;
+}
+
+function getRequiredRelativeBaseImportSpecifier(
+  containingFile: string,
+  baseModuleName: string,
+  resolvedFilename: string,
+): string | null {
+  const candidateSpecifier = `./${baseModuleName}`;
+
+  if (resolveModule(containingFile, candidateSpecifier) !== resolvedFilename) {
+    return null;
+  }
+
+  return candidateSpecifier;
+}
+
+function getQuoteCharacter(rawSpecifier: string | undefined): string {
+  return rawSpecifier?.startsWith("'") ? "'" : '"';
 }
 
 function getSubmoduleInfo(filename: string): SubmoduleInfo | null {
@@ -131,6 +208,7 @@ export const restrictRelativeImportsToBaseModuleRule: Rule.RuleModule = {
       description:
         "Disallow relative imports except when a sibling submodule imports its base module from the same directory.",
     },
+    fixable: "code",
     hasSuggestions: false,
     schema: [],
     messages: {
@@ -169,6 +247,25 @@ export const restrictRelativeImportsToBaseModuleRule: Rule.RuleModule = {
           context.report({
             messageId: RELATIVE_IMPORT_MESSAGE_ID,
             node: node.source,
+            fix: resolvedFilename
+              ? (fixer) => {
+                  const replacementSpecifier = getNonRelativeImportSpecifier(
+                    filename,
+                    resolvedFilename,
+                  );
+
+                  if (!replacementSpecifier) {
+                    return null;
+                  }
+
+                  const quote = getQuoteCharacter(node.source.raw);
+
+                  return fixer.replaceText(
+                    node.source,
+                    `${quote}${replacementSpecifier}${quote}`,
+                  );
+                }
+              : null,
           });
           return;
         }
@@ -184,6 +281,24 @@ export const restrictRelativeImportsToBaseModuleRule: Rule.RuleModule = {
             data: {
               baseModuleName: submoduleInfo.baseModuleName,
               submoduleName: submoduleInfo.submoduleName,
+            },
+            fix(fixer) {
+              const replacementSpecifier = getRequiredRelativeBaseImportSpecifier(
+                filename,
+                submoduleInfo.baseModuleName,
+                resolvedFilename,
+              );
+
+              if (!replacementSpecifier) {
+                return null;
+              }
+
+              const quote = getQuoteCharacter(node.source.raw);
+
+              return fixer.replaceText(
+                node.source,
+                `${quote}${replacementSpecifier}${quote}`,
+              );
             },
           });
         }
