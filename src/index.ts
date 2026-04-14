@@ -1,5 +1,6 @@
 import type { ESLint, Linter } from "eslint";
 
+import { enforceModuleLayerDependenciesRule } from "./rules/enforce-module-layer-dependencies.js";
 import { preferSingleLineTSDocCommentsRule } from "./rules/prefer-single-line-tsdoc-comments.js";
 import { requireEmptyLineAfterFileTSDocRule } from "./rules/require-empty-line-after-file-tsdoc.js";
 import { requireFileTSDocRule } from "./rules/require-file-tsdoc.js";
@@ -8,6 +9,7 @@ import { requireTSDocStyleCommentsBeforeExportsRule } from "./rules/require-tsdo
 import { restrictRelativeImportsToBaseModuleRule } from "./rules/restrict-relative-imports-to-base-module.js";
 
 export const rules = {
+  "enforce-module-layer-dependencies": enforceModuleLayerDependenciesRule,
   "prefer-single-line-tsdoc-comments": preferSingleLineTSDocCommentsRule,
   "require-empty-line-after-file-tsdoc": requireEmptyLineAfterFileTSDocRule,
   "require-file-tsdoc": requireFileTSDocRule,
@@ -37,6 +39,7 @@ export const configs = {
         tyrant: pluginObject,
       },
       rules: {
+        "tyrant/enforce-module-layer-dependencies": "warn",
         "tyrant/prefer-single-line-tsdoc-comments": "error",
         "tyrant/require-empty-line-after-file-tsdoc": "error",
         "tyrant/require-file-tsdoc": "error",
@@ -53,6 +56,7 @@ export const configs = {
         tyrant: pluginObject,
       },
       rules: {
+        "tyrant/enforce-module-layer-dependencies": "warn",
         "tyrant/prefer-single-line-tsdoc-comments": "error",
         "tyrant/require-empty-line-after-file-tsdoc": "error",
         "tyrant/require-file-tsdoc": "error",

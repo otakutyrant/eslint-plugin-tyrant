@@ -2,8 +2,9 @@
 
 ESLint plugin for TypeScript codebases that want stricter documentation rules.
 
-The plugin currently ships six rules:
+The plugin currently ships seven rules:
 
+- `tyrant/enforce-module-layer-dependencies`
 - `tyrant/prefer-single-line-tsdoc-comments`
 - `tyrant/require-file-tsdoc`
 - `tyrant/require-empty-line-after-file-tsdoc`
@@ -50,6 +51,18 @@ export default [
     plugins: { tyrant },
     rules: {
       "tyrant/prefer-single-line-tsdoc-comments": "error",
+      "tyrant/enforce-module-layer-dependencies": [
+        "warn",
+        [
+          "lib",
+          "corpus",
+          "prisma",
+          "services",
+          "server-functions",
+          "components",
+          "app",
+        ],
+      ],
       "tyrant/require-file-tsdoc": "error",
       "tyrant/require-empty-line-after-file-tsdoc": "error",
       "tyrant/require-index-module-organization-tsdoc": "error",
@@ -61,6 +74,21 @@ export default [
 ```
 
 ## Rules
+
+### `tyrant/enforce-module-layer-dependencies`
+
+Requires configured top-level directories to depend only on themselves or lower layers. In the bundled `recommended` configs, this rule is enabled as a warning by default. Pass one array ordered from bottom to top, such as `["lib", "corpus", "prisma", "services", "server-functions", "components", "app"]`: `lib` is the lowest layer, `app` is the highest, and each directory may import only itself or directories to its left in the array. The rule resolves imports with TypeScript module resolution, uses the first path segment under the nearest `tsconfig.json` as the layer name, and ignores files outside the configured directories.
+
+```ts
+"tyrant/enforce-module-layer-dependencies": [
+  "warn",
+  ["lib", "corpus", "prisma", "services", "server-functions", "components", "app"],
+];
+
+// Allowed: services/library.ts importing lib/logger
+// Allowed: app/page.tsx importing services/library
+// Forbidden: services/library.ts importing app/page
+```
 
 ### `tyrant/prefer-single-line-tsdoc-comments`
 
