@@ -58,7 +58,7 @@ export const requireEmptyLineAfterFileTSDocRule: Rule.RuleModule = {
             const sourceText = context.sourceCode.getText();
             const lineBreak = sourceText.includes("\r\n") ? "\r\n" : "\n";
             const textAfterComment = sourceText.slice(fileTSDocComment.end);
-            const leadingLineBreak = textAfterComment.match(/^(?:\r\n|\n)/)?.[0];
+            const leadingLineBreak = /^(?:\r\n|\n)/.exec(textAfterComment)?.[0];
 
             return fixer.insertTextAfterRange(
               [fileTSDocComment.start, fileTSDocComment.end],

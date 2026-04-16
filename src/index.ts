@@ -1,6 +1,7 @@
 import type { ESLint, Linter } from "eslint";
 
 import { enforceModuleLayerDependenciesRule } from "./rules/enforce-module-layer-dependencies.js";
+import { enforceTSDocTagOrderRule } from "./rules/enforce-tsdoc-tag-order.js";
 import { preferSingleLineTSDocCommentsRule } from "./rules/prefer-single-line-tsdoc-comments.js";
 import { requireEmptyLineAfterFileTSDocRule } from "./rules/require-empty-line-after-file-tsdoc.js";
 import { requireFileTSDocRule } from "./rules/require-file-tsdoc.js";
@@ -10,6 +11,7 @@ import { restrictRelativeImportsToBaseModuleRule } from "./rules/restrict-relati
 
 export const rules = {
   "enforce-module-layer-dependencies": enforceModuleLayerDependenciesRule,
+  "enforce-tsdoc-tag-order": enforceTSDocTagOrderRule,
   "prefer-single-line-tsdoc-comments": preferSingleLineTSDocCommentsRule,
   "require-empty-line-after-file-tsdoc": requireEmptyLineAfterFileTSDocRule,
   "require-file-tsdoc": requireFileTSDocRule,
@@ -40,6 +42,7 @@ export const configs = {
       },
       rules: {
         "tyrant/enforce-module-layer-dependencies": "warn",
+        "tyrant/enforce-tsdoc-tag-order": "error",
         "tyrant/prefer-single-line-tsdoc-comments": "error",
         "tyrant/require-empty-line-after-file-tsdoc": "error",
         "tyrant/require-file-tsdoc": "error",
@@ -57,6 +60,7 @@ export const configs = {
       },
       rules: {
         "tyrant/enforce-module-layer-dependencies": "warn",
+        "tyrant/enforce-tsdoc-tag-order": "error",
         "tyrant/prefer-single-line-tsdoc-comments": "error",
         "tyrant/require-empty-line-after-file-tsdoc": "error",
         "tyrant/require-file-tsdoc": "error",

@@ -5,6 +5,7 @@ ESLint plugin for TypeScript codebases that want stricter documentation rules.
 The plugin currently ships seven rules:
 
 - `tyrant/enforce-module-layer-dependencies`
+- `tyrant/enforce-tsdoc-tag-order`
 - `tyrant/prefer-single-line-tsdoc-comments`
 - `tyrant/require-file-tsdoc`
 - `tyrant/require-empty-line-after-file-tsdoc`
@@ -63,6 +64,7 @@ export default [
           "app",
         ],
       ],
+      "tyrant/enforce-tsdoc-tag-order": "error",
       "tyrant/require-file-tsdoc": "error",
       "tyrant/require-empty-line-after-file-tsdoc": "error",
       "tyrant/require-index-module-organization-tsdoc": "error",
@@ -123,6 +125,61 @@ Invalid:
  * One line.
  */
 export const answer = 42;
+```
+
+### `tyrant/enforce-tsdoc-tag-order`
+
+Requires each TSDoc comment to follow the tag order declared by `supportForTags` in the nearest `tsdoc.json`.
+
+The current implementation:
+
+- finds the nearest ancestor `tsdoc.json` from the linted file
+- reads the property order of `supportForTags`
+- treats blank lines inside `supportForTags` as tag-group separators
+- reports and autofixes TSDoc comments whose known tags are out of order or grouped differently
+
+Given this config:
+
+```json
+{
+  "supportForTags": {
+    "@remarks": true,
+
+    "@param": true,
+    "@returns": true
+  }
+}
+```
+
+Valid:
+
+```ts
+/**
+ * Formats the value.
+ *
+ * @remarks Used by the public serializer.
+ *
+ * @param value - The input value.
+ * @returns The formatted value.
+ */
+export function format(value: string): string {
+  return value;
+}
+```
+
+Invalid:
+
+```ts
+/**
+ * Formats the value.
+ *
+ * @param value - The input value.
+ * @remarks Used by the public serializer.
+ * @returns The formatted value.
+ */
+export function format(value: string): string {
+  return value;
+}
 ```
 
 ### `tyrant/require-file-tsdoc`
