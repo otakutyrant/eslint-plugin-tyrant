@@ -2,7 +2,7 @@
 
 ESLint plugin for TypeScript codebases that want stricter documentation rules.
 
-The plugin currently ships seven rules:
+The plugin currently ships eight rules:
 
 - `tyrant/enforce-module-layer-dependencies`
 - `tyrant/enforce-tsdoc-tag-order`

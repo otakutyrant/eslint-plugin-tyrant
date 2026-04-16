@@ -25,7 +25,7 @@ export const rules = {
 
 const pluginMeta = {
   name: "eslint-plugin-tyrant",
-  version: "0.5.7",
+  version: "0.7.0",
 } as const;
 
 const pluginObject = {
