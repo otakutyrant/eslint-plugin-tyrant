@@ -2,10 +2,11 @@
 
 ESLint plugin for TypeScript codebases that want stricter documentation rules.
 
-The plugin currently ships eight rules:
+The plugin currently ships nine rules:
 
 - `tyrant/enforce-module-layer-dependencies`
 - `tyrant/enforce-tsdoc-tag-order`
+- `tyrant/no-direct-error-instantiation`
 - `tyrant/prefer-single-line-tsdoc-comments`
 - `tyrant/require-file-tsdoc`
 - `tyrant/require-empty-line-after-file-tsdoc`
@@ -65,6 +66,7 @@ export default [
         ],
       ],
       "tyrant/enforce-tsdoc-tag-order": "error",
+      "tyrant/no-direct-error-instantiation": "error",
       "tyrant/require-file-tsdoc": "error",
       "tyrant/require-empty-line-after-file-tsdoc": "error",
       "tyrant/require-index-module-organization-tsdoc": "error",
@@ -180,6 +182,24 @@ Invalid:
 export function format(value: string): string {
   return value;
 }
+```
+
+### `tyrant/no-direct-error-instantiation`
+
+Disallows direct `Error` construction. Instead of `new Error(...)`, define a domain-specific subclass such as `DomainError extends Error` and instantiate that subclass.
+
+Valid:
+
+```ts
+class DomainError extends Error {}
+
+throw new DomainError("Order state is invalid.");
+```
+
+Invalid:
+
+```ts
+throw new Error("Order state is invalid.");
 ```
 
 ### `tyrant/require-file-tsdoc`
